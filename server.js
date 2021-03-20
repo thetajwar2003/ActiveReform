@@ -35,14 +35,16 @@ app.get('/users/:email/:password', (req, res) => {
 })
 
 // /POST new user
-app.post('/users/:id/:firstName/:lastName/:email/:password/:school', (req, res) => {
+app.post('/users/:id/:firstName/:lastName/:email/:password/:school/:idOfMade/:idOfSigned', (req, res) => {
     const user = {
         id: req.body.id,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
-        school: req.body.school
+        school: req.body.school,
+        idOfMade: req.body.idOfMade,
+        idOfSigned: req.body.idOfSigned
     }
 
     mongodb.connect(mongodb_URI, function (error, db) {

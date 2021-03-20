@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const eventSchema = new Schema ({
     id: {
         type: String,
-        required: String
+        required: true
     },
     namesOfContributors: {
         type: [String],
