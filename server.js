@@ -10,7 +10,7 @@ app.use(express.json())
 app.get('/users/Jonathan338833&&', (req, res) => {
     mongodb.connect(mongodb_URI, function (error, db) {
         if (error) throw error;
-        var dbo = db.db('StudentApp')
+        var dbo = db.db('FundraiserApp')
         dbo.collection('Users').find({}).toArray(function(error, result) {
             if (error) throw error
             res.send(result)
