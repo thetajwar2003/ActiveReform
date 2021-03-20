@@ -57,5 +57,57 @@ app.post('/users/:id/:firstName/:lastName/:email/:password/:school', (req, res) 
     })
 })
 
+// /GET all events
+app.get('/events/Jonathan338833&&', (req, res) => {
+    mongodb.connect(mongodb_URI, function (error, db) {
+        if (error) throw error;
+        var dbo = db.db('FundraiserApp')
+        dbo.collection('Events').find({}).toArray(function(error, result) {
+            if (error) throw error
+            res.send(result)
+            db.close()
+        })
+    })
+})
+
+// /GET specific event 
+app.get('/events/:id', (req, res) => {
+    mongodb.connect(mongodb_URI, function(error, db) {
+        if (error) throw error
+        var dbo = db.db('FundraiserApp')
+        var query = { id: req.params.id }
+        dbo.collection('Events').find(query).toArray(function(error, result) { 
+            if (error) throw error
+            res.send(result)
+            console.log(result)
+            db.close()
+        })
+    })
+})
+
+// /POST new event
+app.post('/events/:id/:namesOfContributors/:nameOfEvent/:description/:money/:tags/:type', (req, res) => {
+    const user = {
+        id: req.body.id,
+        namesOfContributors: req.body.namesOfContributors,
+        nameOfEvent: req.body.nameOfEvent,
+        description: req.body.description,
+        money: req.body.money,
+        tags: req.body.tags,
+        type: req.body.type
+    }
+
+    mongodb.connect(mongodb_URI, function (error, db) {
+        if (error) throw error;
+        var dbo = db.db('FundraiserApp')
+        dbo.collection('Events').insertOne(user, function(error, result) {
+            if (error) throw error;
+            assert.equal(null, error)
+            console.log('Item inserted')
+            db.close();
+        })
+    })
+})
+
 const port = process.env.PORT || 2000
 app.listen(port, () => console.log('Listening on ' + port + '...'))
