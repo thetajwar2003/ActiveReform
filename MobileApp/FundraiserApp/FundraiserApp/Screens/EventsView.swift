@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EventsView: View {
     @Environment(\.colorScheme) var colorScheme
-    @ObservedObject var screen = ScreenVariables()
+    @ObservedObject var screen: ScreenVariables
     @State var namesOfEvents = [String]()
     @State var names = [[String]]()
     @State var descriptions = [String]()
@@ -100,35 +100,6 @@ struct EventsView: View {
         }
     }
     
-    func getUser(email: String, pasword: String) {
-        let queryEmail = email.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        let queryPassword = email.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        guard let url = URL(string: "https://active-reform.herokuapp.com//users/\(queryEmail)/\(queryPassword)'") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = [
-            "Content-Type": "application/json"
-        ]
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data else { return }
-
-            if let decoded = try? JSONDecoder().decode([User].self, from: data) {
-                for user in decoded {
-                    for _ in 0..<20 {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                            screen.user = user
-                            if screen.user.firstName != "" {
-                                return
-                            }
-                        }
-                    }
-                    
-                }
-            }
-        }.resume()
-    }
-    
     func getEvents() {
         guard let url = URL(string: "https://active-reform.herokuapp.com/events/Jonathan338833&&") else { return }
         var request = URLRequest(url: url)
@@ -187,7 +158,7 @@ struct EventsView: View {
             .offset(y: UIScreen.main.bounds.height / -128)
         }
         .sheet(isPresented: $addingPressed) {
-            EventsAddingView()
+            EventsAddingView(screen: screen)
         }
         .onAppear(perform: getEvents)
         .onAppear {

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		93C69D67260670F20034C80B /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C69D66260670F20034C80B /* LoginView.swift */; };
+		93C69D6B26067C120034C80B /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C69D6A26067C120034C80B /* SignupView.swift */; };
 		93DC17C726066903008A7A01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DC17C626066903008A7A01 /* AppDelegate.swift */; };
 		93DC17C926066903008A7A01 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DC17C826066903008A7A01 /* SceneDelegate.swift */; };
 		93DC17CB26066903008A7A01 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DC17CA26066903008A7A01 /* ContentView.swift */; };
@@ -19,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		93C69D66260670F20034C80B /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		93C69D6A26067C120034C80B /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
 		93DC17C326066903008A7A01 /* FundraiserApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FundraiserApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93DC17C626066903008A7A01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		93DC17C826066903008A7A01 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +92,8 @@
 			children = (
 				93DC17DC26066920008A7A01 /* EventsAddingView.swift */,
 				93DC17DD26066920008A7A01 /* EventsView.swift */,
+				93C69D66260670F20034C80B /* LoginView.swift */,
+				93C69D6A26067C120034C80B /* SignupView.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -171,8 +177,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				93DC17DE26066920008A7A01 /* EventsAddingView.swift in Sources */,
+				93C69D67260670F20034C80B /* LoginView.swift in Sources */,
 				93DC17DF26066920008A7A01 /* EventsView.swift in Sources */,
 				93DC17C726066903008A7A01 /* AppDelegate.swift in Sources */,
+				93C69D6B26067C120034C80B /* SignupView.swift in Sources */,
 				93DC17E32606692C008A7A01 /* ScreenVariables.swift in Sources */,
 				93DC17C926066903008A7A01 /* SceneDelegate.swift in Sources */,
 				93DC17CB26066903008A7A01 /* ContentView.swift in Sources */,

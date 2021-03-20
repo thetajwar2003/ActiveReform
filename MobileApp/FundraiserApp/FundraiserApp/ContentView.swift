@@ -12,8 +12,12 @@ struct ContentView: View {
 
     var body: some View {
         switch screen.currentScreen {
-            default:
-                EventsView()
+        case 1:
+            LoginView(screen: screen)
+        case 2:
+            SignupView(screen: screen)
+        default:
+            EventsView(screen: screen)
         }
     }
 }
