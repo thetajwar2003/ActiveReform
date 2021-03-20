@@ -118,6 +118,7 @@ struct SignupView: View {
         let querySchool = school.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         let queryListMade = "\([])".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         let queryListSigned = "\([])".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        // localhost:2000/users/Test/Roberto/Wong/test@test.com/test/BronxScience/%5B%5D/%5B%5D
         guard let url = URL(string: "https://active-reform.herokuapp.com/users/\(id)/\(queryFirstName)/\(queryLastName)/\(queryEmail)/\(queryPassword)/\(querySchool)/\(queryListMade)/\(queryListSigned)") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"

@@ -8,7 +8,7 @@
 import SwiftUI
 
 class ScreenVariables: ObservableObject {
-    @Published var currentScreen: Int = 0
+    @Published var currentScreen: Int = 1
     @Published var color: String = "Default"
     @Published var user: User = User()
 }
