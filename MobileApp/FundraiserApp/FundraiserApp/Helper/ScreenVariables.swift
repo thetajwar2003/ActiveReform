@@ -12,11 +12,3 @@ class ScreenVariables: ObservableObject {
     @Published var color: String = "Default"
     @Published var user: User = User()
 }
-
-struct User: Codable {
-    var firstName: String = ""
-    var lastName: String = ""
-    var email: String = ""
-    var password: String = ""
-    var school: String = ""
-}

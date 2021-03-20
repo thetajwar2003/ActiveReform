@@ -9,13 +9,14 @@ import SwiftUI
 
 struct EventsAddingView: View {
     @Environment(\.colorScheme) var colorScheme
-    @ObservedObject var screen = ScreenVariables()
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var screen: ScreenVariables
     @State var nameOfEvent = ""
     @State var name = ""
-    @State var numberOfNames: Int = 1
     @State var names = [String]()
     @State var description = ""
     @State var money: Double = 0
+    @State var tag = ""
     @State var tags = [String]()
     @State var type = ""
 
@@ -54,7 +55,15 @@ struct EventsAddingView: View {
         }
     }
     
-    func postEvents(_ id: String, _ namesOfContributors: [String], nameOfEvent: String, description: String, money: Double, tags: [String], type: String) {
+    func addToListOfTags() {
+        withAnimation {
+            tags.append(tag)
+            tag = ""
+        }
+    }
+    
+    func postEvents(_ id: String, _ namesOfContributors: inout [String], nameOfEvent: String, description: String, money: Double, tags: [String], type: String) {
+        namesOfContributors.remove(at: 0)
         let queryNamesOfContributors = "\(namesOfContributors)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         let queryTags = "\(tags)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         guard let url = URL(string: "https://active-reform.herokuapp.com/events/\(id)/\(queryNamesOfContributors)/\(nameOfEvent)/\(description)/\(money)/\(queryTags)/\(type)") else { return }
@@ -63,10 +72,18 @@ struct EventsAddingView: View {
         request.allHTTPHeaderFields = [
             "Content-Type": "application/json"
         ]
-        
+        let params = [
+            "id": "\(id)",
+            "namesOfContributors": namesOfContributors,
+            "nameOfEvent": nameOfEvent,
+            "description": description,
+            "money": money,
+            "tags": tags,
+            "type": type
+        ] as [String: Any]
+        request.httpBody = try! JSONSerialization.data(withJSONObject: params, options: [])
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else { return }
-
             if let _ = try? JSONDecoder().decode([Events].self, from: data) { }
         }.resume()
     }
@@ -74,66 +91,188 @@ struct EventsAddingView: View {
     var body: some View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
-                HStack(spacing: 0) {
-                    Text("Name of Event")
-                        .foregroundColor(getForeground())
-                    Text("*")
-                        .foregroundColor(Color.red)
-                    Spacer()
-                }
-                .font(.headline)
-                .padding(.top)
-
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(getForeground())
-                    TextField(nameOfEvent, text: $nameOfEvent)
-                        .foregroundColor(getForeground())
-                        .frame(width: UIScreen.main.bounds.width / 16 * 13)
-                }
-                .font(.body)
-                .frame(height: UIScreen.main.bounds.height / 32)
-                
-                HStack(spacing: 0) {
-                    Text("Contributors")
-                        .foregroundColor(getForeground())
-                    Text("*")
-                        .foregroundColor(Color.red)
-                    Spacer()
-                }
-                .font(.headline)
-                .padding(.top)
-                
-                ForEach(names, id: \.self) { name in
-                    HStack {
-                        Text(name)
+                VStack {
+                    HStack(spacing: 0) {
+                        Text("Name of Event")
                             .foregroundColor(getForeground())
-                            .font(.body)
+                        Text("*")
+                            .foregroundColor(Color.red)
                         Spacer()
                     }
+                    .font(.headline)
+                    .padding(.top)
+
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(getForeground())
+                        TextField(nameOfEvent, text: $nameOfEvent)
+                            .foregroundColor(getForeground())
+                            .autocapitalization(.none)
+                            .frame(width: UIScreen.main.bounds.width / 16 * 13)
+                    }
+                    .font(.body)
+                    .frame(height: UIScreen.main.bounds.height / 32)
                 }
                 
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(getForeground())
-                    TextField(name, text: $name, onCommit: addToListOfNames)
-                        .foregroundColor(getForeground())
-                        .frame(width: UIScreen.main.bounds.width / 16 * 13)
+                VStack {
+                    HStack(spacing: 0) {
+                        Text("Contributors")
+                            .foregroundColor(getForeground())
+                        Text("*")
+                            .foregroundColor(Color.red)
+                        Spacer()
+                    }
+                    .font(.headline)
+                    .padding(.top)
+                    .padding(.bottom)
+                    
+                    ForEach(names, id: \.self) { name in
+                        HStack {
+                            Text(name)
+                                .foregroundColor(getForeground())
+                                .font(.body)
+                            Spacer()
+                        }
+                    }
+                    
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(getForeground())
+                        TextField(name, text: $name, onCommit: addToListOfNames)
+                            .foregroundColor(getForeground())
+                            .autocapitalization(.none)
+                            .frame(width: UIScreen.main.bounds.width / 16 * 13)
+                    }
+                    .font(.body)
+                    .frame(height: UIScreen.main.bounds.height / 32)
                 }
-                .font(.body)
-                .frame(height: UIScreen.main.bounds.height / 32)
                 
-                HStack {
-                    Text("Description")
-                        .foregroundColor(getForeground())
-                    Spacer()
+                VStack {
+                    HStack {
+                        Text("Description")
+                            .foregroundColor(getForeground())
+                        Spacer()
+                    }
+                    .font(.headline)
+                    .padding(.top)
+                    
+                    ZStack(alignment: .topLeading) {
+                        TextEditor(text: $description)
+                            .foregroundColor(getForeground())
+                            .autocapitalization(.none)
+                            .frame(width: UIScreen.main.bounds.width / 8 * 7)
+                            .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(getForeground(), lineWidth: 1)
+                            )
+                    }
+                    .font(.body)
+                    .frame(height: UIScreen.main.bounds.height / 4)
                 }
-                .font(.headline)
-                .padding(.top)
                 
+                VStack {
+                    HStack(spacing: 0) {
+                        Text("Tags")
+                            .foregroundColor(getForeground())
+                        Text("*")
+                            .foregroundColor(Color.red)
+                        Spacer()
+                    }
+                    .font(.headline)
+                    .padding(.top)
+                    .padding(.bottom)
+                    
+                    ForEach(tags, id: \.self) { name in
+                        HStack {
+                            Text(name)
+                                .foregroundColor(getForeground())
+                                .font(.body)
+                            Spacer()
+                        }
+                    }
+                    
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(getForeground())
+                        TextField(tag, text: $tag, onCommit: addToListOfTags)
+                            .foregroundColor(getForeground())
+                            .autocapitalization(.none)
+                            .frame(width: UIScreen.main.bounds.width / 16 * 13)
+                    }
+                    .font(.body)
+                    .frame(height: UIScreen.main.bounds.height / 32)
+                }
                 
-                
-                Spacer()
+                VStack {
+                    HStack(spacing: 0) {
+                        Text("Type")
+                            .foregroundColor(getForeground())
+                        Text("*")
+                            .foregroundColor(Color.red)
+                        Spacer()
+                    }
+                    .font(.headline)
+                    .padding(.top)
+                    
+                    HStack {
+                        ZStack {
+                            if type == "Fundraiser" {
+                                Circle()
+                                    .fill()
+                                    .foregroundColor(Color.blue)
+                                    .frame(width: UIScreen.main.bounds.width / 16 - UIScreen.main.bounds.width / 32, height: UIScreen.main.bounds.width / 16 - UIScreen.main.bounds.width / 32)
+                            }
+                            Circle()
+                                .stroke(getForeground(), lineWidth: 1)
+                                .frame(width: UIScreen.main.bounds.width / 16, height: UIScreen.main.bounds.width / 16)
+                        }
+                        .onTapGesture {
+                            withAnimation {
+                                type = "Fundraiser"
+                            }
+                        }
+                        Text("Fundraiser")
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        ZStack {
+                            if type == "Petition" {
+                                Circle()
+                                    .fill()
+                                    .foregroundColor(Color.blue)
+                                    .frame(width: UIScreen.main.bounds.width / 16 - UIScreen.main.bounds.width / 32, height: UIScreen.main.bounds.width / 16 - UIScreen.main.bounds.width / 32)
+                            }
+                            Circle()
+                                .stroke(getForeground(), lineWidth: 1)
+                                .frame(width: UIScreen.main.bounds.width / 16, height: UIScreen.main.bounds.width / 16)
+                        }
+                        .onTapGesture {
+                            withAnimation {
+                                type = "Petition"
+                            }
+                        }
+                        Text("Petition")
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Spacer()
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(getForeground())
+                            Text("Finish")
+                                .foregroundColor(getForeground())
+                                .frame(width: UIScreen.main.bounds.width / 4)
+                        }
+                        .frame(width: UIScreen.main.bounds.width / 4)
+                        .onTapGesture {
+                            postEvents("\(UUID())", &names, nameOfEvent: nameOfEvent, description: description, money: money, tags: tags, type: type)
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
+                }
             }
             .frame(width: UIScreen.main.bounds.width / 8 * 7, height: UIScreen.main.bounds.height / 8 * 7)
             .padding(.top)
